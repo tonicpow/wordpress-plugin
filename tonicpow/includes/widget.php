@@ -32,9 +32,10 @@ class TonicPow_Widget extends WP_Widget
     // Set widget defaults
     $defaults = array(
       'title'    => '',
-      'address'     => '',
-      'rate'     => '',
-      'adUnitID'     => '',
+      // 'address'     => '',
+      // 'rate'     => '',
+      // 'adUnitID'     => '',
+      'widgetId' => '',
       'dimensions' => '',
       // 'textarea' => '',
       // 'checkbox' => '',
@@ -51,28 +52,34 @@ class TonicPow_Widget extends WP_Widget
       <input class="widefat" id="<?php echo esc_attr($this->get_field_id('title')); ?>" name="<?php echo esc_attr($this->get_field_name('title')); ?>" type="text" value="<?php echo esc_attr($title); ?>" />
     </p>
 
-    <?php // Address Field 
-    ?>
+    <!-- <?php // Address Field 
+          ?>
     <p>
       <label for="<?php echo esc_attr($this->get_field_id('address')); ?>"><?php _e('Payout Address:', 'text_domain'); ?></label>
       <input class="widefat" id="<?php echo esc_attr($this->get_field_id('address')); ?>" name="<?php echo esc_attr($this->get_field_name('address')); ?>" type="text" value="<?php echo esc_attr($address); ?>" />
+    </p> -->
+
+    <?php // Widget ID Field 
+    ?>
+    <p>
+      <label for="<?php echo esc_attr($this->get_field_id('widgetId')); ?>"><?php _e('Widget ID:', 'text_domain'); ?></label>
+      <input class="widefat" id="<?php echo esc_attr($this->get_field_id('widgetId')); ?>" name="<?php echo esc_attr($this->get_field_name('widgetId')); ?>" type="text" value="<?php echo esc_attr($widgetId); ?>" />
     </p>
 
-
-    <?php // Rate Field 
-    ?>
+    <!-- <?php // Rate Field 
+          ?>
     <p>
       <label for="<?php echo esc_attr($this->get_field_id('rate')); ?>"><?php _e('Rate:', 'text_domain'); ?></label>
       <input class="widefat" id="<?php echo esc_attr($this->get_field_id('rate')); ?>" name="<?php echo esc_attr($this->get_field_name('rate')); ?>" type="text" value="<?php echo esc_attr($rate); ?>" />
-    </p>
+    </p> -->
 
 
-    <?php // Ad Unit ID Field 
-    ?>
+    <!-- <?php // Ad Unit ID Field 
+          ?>
     <p>
       <label for="<?php echo esc_attr($this->get_field_id('adUnitID')); ?>"><?php _e('Ad Unit ID:', 'text_domain'); ?></label>
       <input class="widefat" id="<?php echo esc_attr($this->get_field_id('adUnitID')); ?>" name="<?php echo esc_attr($this->get_field_name('adUnitID')); ?>" type="text" value="<?php echo esc_attr($adUnitID); ?>" />
-    </p>
+    </p> -->
 
     <!--     
     <?php // Textarea Field 
@@ -130,9 +137,10 @@ class TonicPow_Widget extends WP_Widget
   {
     $instance = $old_instance;
     $instance['title']    = isset($new_instance['title']) ? wp_strip_all_tags($new_instance['title']) : '';
-    $instance['address']     = isset($new_instance['address']) ? wp_strip_all_tags($new_instance['address']) : '';
-    $instance['rate']     = isset($new_instance['rate']) ? wp_strip_all_tags($new_instance['rate']) : '';
-    $instance['adUnitID']     = isset($new_instance['adUnitID']) ? wp_strip_all_tags($new_instance['adUnitID']) : '';
+    // $instance['address']     = isset($new_instance['address']) ? wp_strip_all_tags($new_instance['address']) : '';
+    // $instance['rate']     = isset($new_instance['rate']) ? wp_strip_all_tags($new_instance['rate']) : '';
+    // $instance['adUnitID']     = isset($new_instance['adUnitID']) ? wp_strip_all_tags($new_instance['adUnitID']) : '';
+    $instance['widgetId']   = isset($new_instance['widgetId']) ? wp_strip_all_tags($new_instance['widgetId']) : '';
     $instance['dimensions']   = isset($new_instance['dimensions']) ? wp_strip_all_tags($new_instance['dimensions']) : '';
 
     return $instance;
@@ -146,10 +154,9 @@ class TonicPow_Widget extends WP_Widget
 
     // Check the widget options
     $title    = isset($instance['title']) ? apply_filters('widget_title', $instance['title']) : '';
-    $address     = isset($instance['address']) ? $instance['address'] : '';
-    $rate     = isset($instance['rate']) ? $instance['rate'] : '';
-    $adUnitID     = isset($instance['adUnitID']) ? $instance['adUnitID'] : '';
+
     // $textarea = isset($instance['textarea']) ? $instance['textarea'] : '';
+    $widgetId   = isset($instance['widgetId']) ? $instance['widgetId'] : '';
     $dimensions   = isset($instance['dimensions']) ? $instance['dimensions'] : '';
     list($width, $height) = explode('x', $dimensions);
     $width = substr($width, 1);
@@ -166,8 +173,7 @@ class TonicPow_Widget extends WP_Widget
     }
 
     // TonicPow ad-unit widget
-    echo '<div class="tonic" data-address="' . $address . '" data-rate="' . $rate . '" data-unit-id="' . $adUnitID . '" data-width="' . $width . '" data-height="' . $height . '"></div>';
-
+    echo '<div class="tonicpow-widget" data-widget-id="' . $widgetId . '" data-width="' . $width . '" data-height="' . $height . '"></div>';
 
     echo '</div>';
 

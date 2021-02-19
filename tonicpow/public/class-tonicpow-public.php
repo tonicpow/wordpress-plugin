@@ -171,9 +171,9 @@ class Tonicpow_Public
 		switch ($actionName) {
 			case 'woocommerce_payment_complete':
 				$order = wc_get_order($arg1);
-				$message = "Payment complete: " . $order->{'total'} * 100 . PHP_EOL; // $cart_item_id, $product_id, $quantity, $variation_id, $variation, $cart_item_data "
+				$message = "Payment complete: " . $order->{'total'} . PHP_EOL; // $cart_item_id, $product_id, $quantity, $variation_id, $variation, $cart_item_data "
 				error_log($message, 3, $pluginlog);
-				return $this->trigger_conversion($goal_name, $delay_in_minutes, $custom_dimensions, $order->{'total'} * 100);
+				return $this->trigger_conversion($goal_name, $delay_in_minutes, $custom_dimensions, $order->{'total'});
 				break;
 			case 'woocommerce_add_to_cart':
 				// $cart = json_encode($callerTrace);

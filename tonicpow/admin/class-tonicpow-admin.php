@@ -140,7 +140,7 @@ class Tonicpow_Admin
 						echo '<strong>Goal Name: ' . $goal->{'name'} . '</strong><br />';
 						echo ' (rate: ' . $goal->{'payout_rate'} . ' ' . $campaign->{'currency'} . ' payout type: ' . $goal->{'payout_type'} . ' max_per_visitor: ' . $goal->{'max_per_visitor'} . ' max_per_promoter: ' . $goal->{'max_per_promoter'} . ' payouts: ' .  $goal->{'payouts'} . ')';
 					}
-
+					echo '<a target="_blank" href="https://web.staging.tonicpow.com/app/dashboard/ad-profiles/' . $campaign->{'advertiser_profile_id'} . '/campaigns/' . $campaign->{'id'} . '/goals">Edit</a>';
 					echo '</li>';
 				} else {
 					echo '<li style="border: 1px solid indianred; border-radius: 6px; margin-bottom: .25rem; padding: .25rem;"><strong>' . $campaign->{'title'} . '</strong> has no conversion goals. <a target="_blank" href="https://web.staging.tonicpow.com/app/dashboard/ad-profiles/' . $campaign->{'advertiser_profile_id'} . '/campaigns/' . $campaign->{'id'} . '/goals">Set one up</a></li>';
