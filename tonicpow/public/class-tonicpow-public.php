@@ -223,6 +223,7 @@ class Tonicpow_Public
 		$ch = curl_init($url);
 
 		$payload = json_encode(array("amount" => $amount, "name" => $goal_name, "tncpw_session" => $tncpw_session, "delay_in_minutes" => $delay_in_minutes, "custom_dimensions" => $custom_dimensions));
+		curl_setopt($ch, CURLOPT_POST, 1);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json', 'api_key:' . $api_key));
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
