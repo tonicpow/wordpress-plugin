@@ -152,7 +152,7 @@ class Tonicpow_Public
 		// set up log
 		$pluginlog = plugin_dir_path(__FILE__) . 'debug.log';
 
-		$goal_name = get_option("tonicpow_goal_name");
+		$goal_name = $_SESSION["available_goals"][get_option("tonicpow_goal_name")[0]];
 		$amount = get_option("tonicpow_amount");
 		$delay_in_minutes = get_option("tonicpow_delay_in_minutes");
 		$custom_dimensions = get_option("tonicpow_custom_dimensions");
@@ -215,12 +215,17 @@ class Tonicpow_Public
 		$api_key = get_option("tonicpow_api_key");
 
 		// Get the tncpw_session
-		$tncpw_session = WC()->session->get('tncpw_session');
+		$tncpw_session = $_SESSION["tncpw_session"]; // WC()->session->get('tncpw_session');
 
 		// Trigger tonicpow conversion
 		$base_api_url = get_option("tonicpow_base_api_url");
 		$url = $base_api_url . "conversions";
 		$ch = curl_init($url);
+
+		// TODO: Delay in minutes is false here if not set. Should always be 0
+		if (!$delay_in_minutes) {
+			$delay_in_minutes = 0;
+		}
 
 		$payload = json_encode(array("amount" => $amount, "name" => $goal_name, "tncpw_session" => $tncpw_session, "delay_in_minutes" => $delay_in_minutes, "custom_dimensions" => $custom_dimensions));
 		curl_setopt($ch, CURLOPT_POST, 1);
@@ -229,7 +234,9 @@ class Tonicpow_Public
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json', 'api_key:' . $api_key));
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-		curl_exec($ch);
+		error_log($payload, 3, $pluginlog);
+
+		$result = curl_exec($ch);
 		// Check HTTP status code
 		if (!curl_errno($ch)) {
 			switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
@@ -239,11 +246,17 @@ class Tonicpow_Public
 				case 401: # UNAUTHORIZED
 					$message = "Unable to authenticate. Check your API key. Code: $http_code " . $api_key . " " . PHP_EOL;
 					break;
+				case 422: # Unprocessable Entity
+					$message = "Make sure the params are valid. Amount: $amount Api Key: " . $api_key . " Name:" . $goal_name . " Session" . $tncpw_session . " S2 " . $_SESSION["tncpw_session"] . " Delay: " . $delay_in_minutes . " Custom Dimensions: $custom_dimensions" . " " . PHP_EOL;
+					break;
+				case 0:
+					$message = "There was a connection error. Curl returned a status code of 0" . PHP_EOL;
+					break;
 				default:
 					$message = "Unable to trigger conversion. This could mean the tncpw_session is not valid or the campaign is otherwise unable to pay out. Code: $http_code " . $api_key . " " . var_dump($result) . PHP_EOL;
-					error_log($message, 3, $pluginlog);
 					break;
 			}
+			error_log($message, 3, $pluginlog);
 		}
 		curl_close($ch);
 		return true;
@@ -252,7 +265,7 @@ class Tonicpow_Public
 	// public function wc_payment_complete()
 	// {
 	// 	$goal_name = get_option("tonicpow_goal_name");
-	// 	$delay_in_minutes = get_option("tonicpow_delay");
+	// 	$delay_in_minutes = get_option("tonicpow_delay_in_minutes");
 	// 	$custom_dimensions = get_option("tonicpow_custom_dimensions");
 
 	// 	$this->trigger_conversion($goal_name, $delay_in_minutes, $custom_dimensions);

@@ -405,7 +405,7 @@ class Tonicpow_Admin
 				'default' => array(0 => 'woocommerce_payment_complete')
 			),
 			array(
-				'uid' => 'tonicpow_delay',
+				'uid' => 'tonicpow_delay_in_minutes',
 				'label' => 'Delay',
 				'section' => 'conversion_section',
 				'type' => 'text',
