@@ -143,7 +143,7 @@ class Tonicpow_Admin
 
 					echo '</li>';
 				} else {
-					echo '<li style="border: 1px solid indianred; border-radius: 6px; margin-bottom: .25rem; padding: .25rem;"><strong>' . $campaign->{'title'} . '</strong> has no conversion goals. <a target="_blank" href="https://offers.tonicpow.com/create_campaign/' . $campaign->{'id'} . '">Set one up</a></li>';
+					echo '<li style="border: 1px solid indianred; border-radius: 6px; margin-bottom: .25rem; padding: .25rem;"><strong>' . $campaign->{'title'} . '</strong> has no conversion goals. <a target="_blank" href="https://web.staging.tonicpow.com/app/dashboard/ad-profiles/' . $campaign->{'advertiser_profile_id'} . '/campaigns/' . $campaign->{'id'} . '/goals">Set one up</a></li>';
 				}
 			}
 			echo '</ul>
