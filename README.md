@@ -1,4 +1,4 @@
-<img src="https://github.com/tonicpow/wordpress-plugin/blob/master/.github/images/tonicpow-logo.png?raw=true" height="100" alt="TonicPow">
+<img src="https://github.com/tonicpow/wordpress-plugin/blob/master/.github/IMAGES/tonicpow-logo.png?raw=true" height="100" alt="TonicPow">
 
 > Learn more [about TonicPow](https://tonicpow.com/). Checkout the [TonicPow API Docs](https://docs.tonicpow.com).
 
