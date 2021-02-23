@@ -137,19 +137,20 @@ class Tonicpow_Admin
 
 					foreach ($campaign->{'goals'} as $goal) {
 						// Add the goal to the goal selector
-						echo '<strong>Goal Name: ' . $goal->{'name'} . '</strong><br />';
-						echo ' (rate: ' . $goal->{'payout_rate'} . ' ' . $campaign->{'currency'} . ' payout type: ' . $goal->{'payout_type'} . ' max_per_visitor: ' . $goal->{'max_per_visitor'} . ' max_per_promoter: ' . $goal->{'max_per_promoter'} . ' payouts: ' .  $goal->{'payouts'} . ')';
+						echo '<strong>Goal Name: ' . $goal->{'name'} . '</strong><br />' . PHP_EOL;
+						echo ' (rate: ' . $goal->{'payout_rate'} . ' ' . $campaign->{'currency'} . ' payout type: ' . $goal->{'payout_type'} . ' max_per_visitor: ' . $goal->{'max_per_visitor'} . ' max_per_promoter: ' . $goal->{'max_per_promoter'} . ' payouts: ' .  $goal->{'payouts'} . ')<br />' . PHP_EOL;
+						echo 'Funcing address: ' . $goal->{'funding_Address'} . ' ' . PHP_EOL;
 					}
-					echo '<a target="_blank" href="https://web.staging.tonicpow.com/app/dashboard/ad-profiles/' . $campaign->{'advertiser_profile_id'} . '/campaigns/' . $campaign->{'id'} . '/goals">Edit</a>';
-					echo '</li>';
+					echo '<a target="_blank" href="https://web.staging.tonicpow.com/app/dashboard/ad-profiles/' . $campaign->{'advertiser_profile_id'} . '/campaigns/' . $campaign->{'id'} . '/goals">Edit</a>' . PHP_EOL;
+					echo '</li>' . PHP_EOL;
 				} else {
-					echo '<li style="border: 1px solid indianred; border-radius: 6px; margin-bottom: .25rem; padding: .25rem;"><strong>' . $campaign->{'title'} . '</strong> has no conversion goals. <a target="_blank" href="https://web.staging.tonicpow.com/app/dashboard/ad-profiles/' . $campaign->{'advertiser_profile_id'} . '/campaigns/' . $campaign->{'id'} . '/goals">Set one up</a></li>';
+					echo '<li style="border: 1px solid indianred; border-radius: 6px; margin-bottom: .25rem; padding: .25rem;"><strong>' . $campaign->{'title'} . '</strong> has no conversion goals. <a target="_blank" href="https://web.staging.tonicpow.com/app/dashboard/ad-profiles/' . $campaign->{'advertiser_profile_id'} . '/campaigns/' . $campaign->{'id'} . '/goals">Set one up</a></li>' . PHP_EOL;
 				}
 			}
 			echo '</ul>
-			<br />';
+			<br />' . PHP_EOL;
 
-			echo '<span style="color: #333;">Visit <a href="https://tonicpow.com" target="_blank" />TonicPow</a> to create & update campaigns.</span>';
+			echo '<span style="color: #333;">Visit <a href="https://tonicpow.com" target="_blank" />TonicPow</a> to create & update campaigns.</span>' . PHP_EOL;
 		} else {
 			echo 'Invalid response JSON';
 		}
