@@ -21,7 +21,6 @@
  *
  * @link       https://tonicpow.com
  * @since      1.0.0
- *
  * @package    Tonicpow
  */
 
@@ -31,8 +30,8 @@ if (!defined('WP_UNINSTALL_PLUGIN')) {
 }
 
 // global $wpdb
-// // Delete all options/settings.
-// // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+// Delete all options/settings.
+// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 // $wpdb->query("DELETE FROM `$wpdb->options` WHERE option_name LIKE 'tonicpow\_%';");
 
 foreach (wp_load_alloptions() as $option => $value) {

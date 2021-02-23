@@ -60,55 +60,17 @@ class Tonicpow_Admin
 
 		$pluginlog = plugin_dir_path(__FILE__) . 'debug.log';
 
-		// if (!isset($_SESSION["tncpw_cookie"])) {
-		// 	// CREATE A SESSION
-		// 	$api_key = get_option("tonicpow_api_key");
-		// 	$base_api_url = get_option("tonicpow_base_api_url");
-
-		// 	$url = $base_api_url . "auth/session";
-		// 	$ch = curl_init($url);
-		// 	$payload = json_encode(array("api_key" => $api_key));
-		// 	curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
-		// 	curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
-		// 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		// 	curl_setopt($ch, CURLOPT_HEADER, 1);
-		// 	$result = curl_exec($ch);
-
-		// 	// get cookie
-		// 	// multi-cookie variant contributed by @Combuster in comments
-		// 	preg_match_all('/^Set-Cookie:\s*([^;]*)/mi', $result, $matches);
-		// 	$cookies = array();
-		// 	foreach ($matches[1] as $item) {
-		// 		parse_str($item, $cookie);
-		// 		$cookies = array_merge($cookies, $cookie);
-		// 	}
-
-
-		// 	// Check HTTP status code
-		// 	if (!curl_errno($ch)) {
-		// 		switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
-		// 			case 201:  # CREATED
-		// 				$message = "WC_TONICPOW_SESSION_CREATED: " . $cookies["session_token"] . PHP_EOL;
-		// 				$_SESSION["tncpw_cookie"] = $cookies["session_token"];
-		// 				break;
-		// 			default:
-		// 				$message = "Unable to authenticate. Check your API key. Code: $http_code " . PHP_EOL;
-		// 				break;
-		// 		}
-		// 		error_log($message, 3, $pluginlog);
-		// 	}
-
-		// 	curl_close($ch);
-		// }
-
-
 		$_SESSION["available_goals"] = array();
 
 		if (isset($_GET["tncpw_session"])) {
-			$_SESSION["tncpw_session"] = $_GET["tncpw_session"];
-			// Set Woo Commerce session
+
+		    $_SESSION["tncpw_session"] = $_GET["tncpw_session"];
+
+		    // Set Woo Commerce session
 			// TODO: Check woo commerce is installed (make plugin a requirement?)
 			WC()->session->set('tncpw_session', $_SESSION["tncpw_session"]);
+
+			// todo: remove error logs
 			$message = "WP_LOADED_TONICPOW" . $_SERVER['REQUEST_URI'] . " - TNCPW_SESSION: " . $_SESSION["tncpw_session"] . PHP_EOL;
 			error_log($message, 3, $pluginlog);
 		}
@@ -139,9 +101,10 @@ class Tonicpow_Admin
 						// Add the goal to the goal selector
 						echo '<strong>Goal Name: ' . $goal->{'name'} . '</strong><br />' . PHP_EOL;
 						echo ' (rate: ' . $goal->{'payout_rate'} . ' ' . $campaign->{'currency'} . ' payout type: ' . $goal->{'payout_type'} . ' max_per_visitor: ' . $goal->{'max_per_visitor'} . ' max_per_promoter: ' . $goal->{'max_per_promoter'} . ' payouts: ' .  $goal->{'payouts'} . ')<br />' . PHP_EOL;
-						echo 'Funcing address: ' . $goal->{'funding_Address'} . ' ' . PHP_EOL;
+						echo 'Funding address: ' . $goal->{'funding_Address'} . ' ' . PHP_EOL;
 					}
-					echo '<a target="_blank" href="https://web.staging.tonicpow.com/app/dashboard/ad-profiles/' . $campaign->{'advertiser_profile_id'} . '/campaigns/' . $campaign->{'id'} . '/goals">Edit</a>' . PHP_EOL;
+					// todo: fix the url below to be dynamic
+					echo '<a target="_blank" href="https://tonicpow.com/app/dashboard/ad-profiles/' . $campaign->{'advertiser_profile_id'} . '/campaigns/' . $campaign->{'id'} . '/goals">Edit</a>' . PHP_EOL;
 					echo '</li>' . PHP_EOL;
 				} else {
 					echo '<li style="border: 1px solid indianred; border-radius: 6px; margin-bottom: .25rem; padding: .25rem;"><strong>' . $campaign->{'title'} . '</strong> has no conversion goals. <a target="_blank" href="https://web.staging.tonicpow.com/app/dashboard/ad-profiles/' . $campaign->{'advertiser_profile_id'} . '/campaigns/' . $campaign->{'id'} . '/goals">Set one up</a></li>' . PHP_EOL;
@@ -150,6 +113,7 @@ class Tonicpow_Admin
 			echo '</ul>
 			<br />' . PHP_EOL;
 
+			// todo: fix the url below to be dynamic
 			echo '<span style="color: #333;">Visit <a href="https://tonicpow.com" target="_blank" />TonicPow</a> to create & update campaigns.</span>' . PHP_EOL;
 		} else {
 			echo 'Invalid response JSON';
@@ -166,15 +130,6 @@ class Tonicpow_Admin
 			echo 'invalid account json';
 		}
 	}
-
-
-	// public function dynamicHook( $cart_item_key, $product_id, $quantity, $variation_id, $variation, $cart_item_data ) {
-	// {
-	// 	$pluginlog = plugin_dir_path(__FILE__) . 'debug.log';
-	// 	$message = "DYNAMIC HOOK! $cart_item_key, $product_id, $quantity, $variation_id, $variation, $cart_item_data " . PHP_EOL;
-	// 	error_log($message, 3, $pluginlog);
-	// 	echo 'Dynamic hook!' . $cart_item_key;
-	// }
 
 	public function output()
 	{ ?>
@@ -248,8 +203,8 @@ class Tonicpow_Admin
 		}
 
 		// If there is supplemental text
-		if ($supplimental = $arguments['supplemental']) {
-			printf('<p class="description">%s</p>', $supplimental); // Show it
+		if ($supplemental = $arguments['supplemental']) {
+			printf('<p class="description">%s</p>', $supplemental); // Show it
 		}
 	}
 
@@ -276,7 +231,6 @@ class Tonicpow_Admin
 			if (!curl_errno($ch)) {
 				switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
 					case 200:  # CREATED
-						# Print response.
 						$_SESSION["logged_in"] = true;
 						$_SESSION["account"] = $accountResult;
 						break;
@@ -342,16 +296,11 @@ class Tonicpow_Admin
 		$this->auth();
 
 		global $wp_filter;
-		// $comment_filters = array();
-		// foreach ($wp_filter as $key => $val) {
-		// 	if (FALSE !== strpos($key, 'comment')) {
-		// 		$comment_filters[$key][] = var_export($val, TRUE);
-		// 	}
-		// }
+
 		$toc = [];
 		foreach ($wp_filter as $key => $val) {
 			// $out .= "<h2 id=$name>$name</h2><pre>" . implode("\n\n", $arr_vals) . '</pre>';
-			if ($key == "woocommerce_payment_complete" || $key == "woocommerce_add_to_cart" || $key == "wp_login" || $key == "media_upoload_image" || $key == "media_upload_file" || $key == "media_upload_video" || $key == "comment_approved_comment" || $key == "comment_post") {
+			if ($key == "woocommerce_payment_complete" || $key == "woocommerce_add_to_cart" || $key == "wp_login" || $key == "media_upload_image" || $key == "media_upload_file" || $key == "media_upload_video" || $key == "comment_approved_comment" || $key == "comment_post") {
 				$toc[$key] = $key;
 			}
 		}
@@ -368,7 +317,7 @@ class Tonicpow_Admin
 				'type' => 'text',
 				'options' => false,
 				'placeholder' => 'placeholder',
-				'helper' => 'Obtained from ToncPow',
+				'helper' => 'Obtained from TonicPow',
 				'supplemental' => '',
 				'default' => ''
 			),
@@ -381,7 +330,7 @@ class Tonicpow_Admin
 				'placeholder' => 'placeholder',
 				'helper' => 'Including version and trailing slash',
 				'supplemental' => 'The base url for all tonicpow API calls.',
-				'default' => 'https://api.staging.tonicpow.com/v1/'
+				'default' => 'https://api.tonicpow.com/v1/'
 			),
 			array(
 				'uid' => 'tonicpow_goal_name',
@@ -431,8 +380,11 @@ class Tonicpow_Admin
 
 		foreach ($fields as $field) {
 			$pluginlog = plugin_dir_path(__FILE__) . 'debug.log';
+
+			// todo: remove error logs
 			$message = "FIELD " . $field['section'] . PHP_EOL;
 			error_log($message, 3, $pluginlog);
+
 			add_settings_field($field['uid'], $field['label'], array($this, 'field_callback'), 'tonicpow_settings', $field['section'], $field);
 			register_setting('tonicpow_settings', $field['uid']);
 		}

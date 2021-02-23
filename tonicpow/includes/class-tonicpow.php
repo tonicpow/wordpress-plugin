@@ -185,7 +185,7 @@ class Tonicpow
 		$this->loader->add_action('wp_enqueue_scripts', $plugin_public, 'enqueue_scripts');
 		$this->loader->add_action('init', $plugin_public, 'init');
 
-		// Register dymanic hook
+		// Register dynamic hook
 		$hook_name = get_option('tonicpow_hook_name');
 		switch ($hook_name[0]) {
 			case "media_upoload_video":

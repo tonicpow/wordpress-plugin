@@ -32,71 +32,41 @@ class TonicPow_Widget extends WP_Widget
     // Set widget defaults
     $defaults = array(
       'title'    => '',
-      // 'address'     => '',
-      // 'rate'     => '',
-      // 'adUnitID'     => '',
       'widgetId' => '',
       'dimensions' => '',
-      // 'textarea' => '',
-      // 'checkbox' => '',
-      // 'select'   => '',
     );
+
+    // todo: these variables are being used but not set? line: 57ish
+    if (!isset($title)) {
+        $title = "";
+    }
+
+    if (!isset($dimensions)) {
+        $dimensions = "";
+    }
+
+    if (!isset($widgetId)) {
+        $widgetId = "";
+    }
 
     // Parse current settings with defaults
     extract(wp_parse_args((array) $instance, $defaults)); ?>
 
-    <?php // Widget Title 
+    <?php // Widget Title
     ?>
     <p>
       <label for="<?php echo esc_attr($this->get_field_id('title')); ?>"><?php _e('Widget Title', 'text_domain'); ?></label>
       <input class="widefat" id="<?php echo esc_attr($this->get_field_id('title')); ?>" name="<?php echo esc_attr($this->get_field_name('title')); ?>" type="text" value="<?php echo esc_attr($title); ?>" />
     </p>
 
-    <!-- <?php // Address Field 
-          ?>
-    <p>
-      <label for="<?php echo esc_attr($this->get_field_id('address')); ?>"><?php _e('Payout Address:', 'text_domain'); ?></label>
-      <input class="widefat" id="<?php echo esc_attr($this->get_field_id('address')); ?>" name="<?php echo esc_attr($this->get_field_name('address')); ?>" type="text" value="<?php echo esc_attr($address); ?>" />
-    </p> -->
-
-    <?php // Widget ID Field 
+    <?php // Widget ID Field
     ?>
     <p>
       <label for="<?php echo esc_attr($this->get_field_id('widgetId')); ?>"><?php _e('Widget ID:', 'text_domain'); ?></label>
       <input class="widefat" id="<?php echo esc_attr($this->get_field_id('widgetId')); ?>" name="<?php echo esc_attr($this->get_field_name('widgetId')); ?>" type="text" value="<?php echo esc_attr($widgetId); ?>" />
     </p>
 
-    <!-- <?php // Rate Field 
-          ?>
-    <p>
-      <label for="<?php echo esc_attr($this->get_field_id('rate')); ?>"><?php _e('Rate:', 'text_domain'); ?></label>
-      <input class="widefat" id="<?php echo esc_attr($this->get_field_id('rate')); ?>" name="<?php echo esc_attr($this->get_field_name('rate')); ?>" type="text" value="<?php echo esc_attr($rate); ?>" />
-    </p> -->
-
-
-    <!-- <?php // Ad Unit ID Field 
-          ?>
-    <p>
-      <label for="<?php echo esc_attr($this->get_field_id('adUnitID')); ?>"><?php _e('Ad Unit ID:', 'text_domain'); ?></label>
-      <input class="widefat" id="<?php echo esc_attr($this->get_field_id('adUnitID')); ?>" name="<?php echo esc_attr($this->get_field_name('adUnitID')); ?>" type="text" value="<?php echo esc_attr($adUnitID); ?>" />
-    </p> -->
-
-    <!--     
-    <?php // Textarea Field 
-    ?>
-    <p>
-      <label for="<?php echo esc_attr($this->get_field_id('textarea')); ?>"><?php _e('Textarea:', 'text_domain'); ?></label>
-      <textarea class="widefat" id="<?php echo esc_attr($this->get_field_id('textarea')); ?>" name="<?php echo esc_attr($this->get_field_name('textarea')); ?>"><?php echo wp_kses_post($textarea); ?></textarea>
-    </p>
-
-    <?php // Checkbox 
-    ?>
-    <p>
-      <input id="<?php echo esc_attr($this->get_field_id('checkbox')); ?>" name="<?php echo esc_attr($this->get_field_name('checkbox')); ?>" type="checkbox" value="1" <?php checked('1', $checkbox); ?> />
-      <label for="<?php echo esc_attr($this->get_field_id('checkbox')); ?>"><?php _e('Checkbox', 'text_domain'); ?></label>
-    </p> -->
-
-    <?php // Dropdown 
+    <?php // Dropdown
     ?>
     <p>
       <label for="<?php echo $this->get_field_id('dimensions'); ?>"><?php _e('Dimensions', 'text_domain'); ?></label>
@@ -153,13 +123,27 @@ class TonicPow_Widget extends WP_Widget
     extract($args);
 
     // Check the widget options
-    $title    = isset($instance['title']) ? apply_filters('widget_title', $instance['title']) : '';
+    $title  = isset($instance['title']) ? apply_filters('widget_title', $instance['title']) : '';
 
     // $textarea = isset($instance['textarea']) ? $instance['textarea'] : '';
-    $widgetId   = isset($instance['widgetId']) ? $instance['widgetId'] : '';
-    $dimensions   = isset($instance['dimensions']) ? $instance['dimensions'] : '';
+    $widgetId = isset($instance['widgetId']) ? $instance['widgetId'] : '';
+    $dimensions = isset($instance['dimensions']) ? $instance['dimensions'] : '';
     list($width, $height) = explode('x', $dimensions);
     $width = substr($width, 1);
+
+    // todo: these variables are being used but not set? line: 156ish
+    if (!isset($before_widget)) {
+        $before_widget = "";
+    }
+    if (!isset($before_title)) {
+        $before_title = "";
+    }
+    if (!isset($after_title)) {
+        $after_title = "";
+    }
+    if (!isset($after_widget)) {
+        $after_widget = "";
+    }
 
     // WordPress core before_widget hook (always include )
     echo $before_widget;

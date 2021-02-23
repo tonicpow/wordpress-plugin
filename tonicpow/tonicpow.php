@@ -14,13 +14,13 @@
  *
  * @wordpress-plugin
  * Plugin Name:       TonicPow
- * Plugin URI:        https://wordpress.tonicpow.com
- * Description:       Triggers conversions for when an order is paid for. Passes TonicPow sessions to metadata field of woocommerce orders for connection to Zapier. Includes a Widget for displaying ads.
+ * Plugin URI:        https://github.com/tonicpow/wordpress-plugin
+ * Description:       Triggers conversions for when an order or action is completed. Passes TonicPow sessions to metadata field of woocommerce orders for connection to Zapier. Includes a Widget for displaying ads.
  * Version:           1.0.0
  * Author:            TonicPow
  * Author URI:        https://tonicpow.com
  * License:           GPL-2.0+
- * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
+ * License URI:       https://github.com/tonicpow/wordpress-plugin/blob/master/LICENSE
  * Text Domain:       tonicpow
  * Domain Path:       /languages
  */

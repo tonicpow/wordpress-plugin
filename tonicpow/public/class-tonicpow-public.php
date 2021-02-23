@@ -83,52 +83,15 @@ class Tonicpow_Public
 
 		$pluginlog = plugin_dir_path(__FILE__) . 'debug.log';
 
-		// if (!isset($_SESSION["tncpw_cookie"])) {
-		// 	// CREATE A SESSION
-		// 	$api_key = get_option("tonicpow_api_key");
-		// 	$base_api_url = get_option("tonicpow_base_api_url");
-
-		// 	$url = $base_api_url . "auth/session";
-		// 	$ch = curl_init($url);
-		// 	$payload = json_encode(array("api_key" => $api_key));
-		// 	curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
-		// 	curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
-		// 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		// 	curl_setopt($ch, CURLOPT_HEADER, 1);
-		// 	$result = curl_exec($ch);
-
-		// 	// get cookie
-		// 	// multi-cookie variant contributed by @Combuster in comments
-		// 	preg_match_all('/^Set-Cookie:\s*([^;]*)/mi', $result, $matches);
-		// 	$cookies = array();
-		// 	foreach ($matches[1] as $item) {
-		// 		parse_str($item, $cookie);
-		// 		$cookies = array_merge($cookies, $cookie);
-		// 	}
-
-
-		// 	// Check HTTP status code
-		// 	if (!curl_errno($ch)) {
-		// 		switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
-		// 			case 201:  # CREATED
-		// 				$message = "WC_TONICPOW_SESSION_CREATED: " . $cookies["session_token"] . PHP_EOL;
-		// 				$_SESSION["tncpw_cookie"] = $cookies["session_token"];
-		// 				break;
-		// 			default:
-		// 				$message = "Unable to authenticate. Check your API key. Code: $http_code " . PHP_EOL;
-		// 				break;
-		// 		}
-		// 		error_log($message, 3, $pluginlog);
-		// 	}
-
-		// 	curl_close($ch);
-		// }
-
 		if (isset($_GET["tncpw_session"])) {
-			$_SESSION["tncpw_session"] = $_GET["tncpw_session"];
+
+		    $_SESSION["tncpw_session"] = $_GET["tncpw_session"];
+
 			// Set Woo Commerce session
 			// TODO: Check woo commerce is installed (make plugin a requirement?)
 			WC()->session->set('tncpw_session', $_SESSION["tncpw_session"]);
+
+			// todo: remove error logging
 			$message = "WP_LOADED_TONICPOW" . $_SERVER['REQUEST_URI'] . " - TNCPW_SESSION: " . $_SESSION["tncpw_session"] . PHP_EOL;
 			error_log($message, 3, $pluginlog);
 		}
@@ -143,11 +106,10 @@ class Tonicpow_Public
 		return $last_call['function'];
 	}
 
-	// define the dynamic hook callback 
+	// define the dynamic hook callback
 	public function dynamicHook($arg1, $arg2 = [], $arg3 = [], $arg4 = [], $arg5 = [], $arg6 = [])
 	{
-		// TODO: get the arguments no matter how many parameters are set on the register hook. Tried to use splat operater w no success so far
-
+		// TODO: get the arguments no matter how many parameters are set on the register hook. Tried to use splat operator w no success so far
 
 		// set up log
 		$pluginlog = plugin_dir_path(__FILE__) . 'debug.log';
@@ -164,15 +126,18 @@ class Tonicpow_Public
 
 		$callerTrace = $trace[4];
 		$callerTrace2 = $trace[2];
-		//string(32) "c20ad4d76fe97759aa27a0c99bff6710" 
-		// Array ( [file] => /var/www/html/wp-includes/class-wp-hook.php [line] => 311 [function] => apply_filters [class] => WP_Hook [type] => -> [args] => Array ( [0] => [1] => Array ( [0] => c20ad4d76fe97759aa27a0c99bff6710 [1] => 12 [2] => 1 [3] => 0 [4] => Array ( ) [5] => Array ( ) ) ) ) 
+
+		//string(32) "c20ad4d76fe97759aa27a0c99bff6710"
+		// Array ( [file] => /var/www/html/wp-includes/class-wp-hook.php [line] => 311 [function] => apply_filters [class] => WP_Hook [type] => -> [args] => Array ( [0] => [1] => Array ( [0] => c20ad4d76fe97759aa27a0c99bff6710 [1] => 12 [2] => 1 [3] => 0 [4] => Array ( ) [5] => Array ( ) ) ) )
 		// string(0) ""
 
 		switch ($actionName) {
 			case 'woocommerce_payment_complete':
 				$order = wc_get_order($arg1);
 				$message = "Payment complete: " . $order->{'total'} . PHP_EOL; // $cart_item_id, $product_id, $quantity, $variation_id, $variation, $cart_item_data "
-				error_log($message, 3, $pluginlog);
+
+                // TODO: remove error logs
+                error_log($message, 3, $pluginlog);
 				return $this->trigger_conversion($goal_name, $delay_in_minutes, $custom_dimensions, $order->{'total'});
 				break;
 			case 'woocommerce_add_to_cart':
@@ -182,18 +147,20 @@ class Tonicpow_Public
 				// // $cart_item_key, $product_id, $quantity, $variation_id, $variation, $cart_item_data
 				// $message = "Add to cart: " . $thing . ' - ' . $cart . ' ' . $arg . PHP_EOL; // $cart_item_id, $product_id, $quantity, $variation_id, $variation, $cart_item_data "
 				$cartItem = WC()->cart->get_cart_item($arg1);
-				// TODO: get the amount somehow
+
+				// TODO: get the amount somehow  (remove error logs)
 				$message = "cart item " . json_encode($cartItem) . 'request: ' . $_REQUEST . PHP_EOL;
 				error_log($message, 3, $pluginlog);
+
 				$amount = 100;
 				return $this->trigger_conversion($goal_name, $delay_in_minutes, $custom_dimensions, $amount);
 				break;
 			case "wp_login":
 			case "comment_post":
 			case 'woocommerce_payment_complete':
-			case "media_upoload_video":
-			case "media_upoload_file":
-			case "media_upoload_image":
+			case "media_upload_video":
+			case "media_upload_file":
+			case "media_upload_image":
 			default:
 				$message = "Unrecognized method name: " . $actionName . ' caller trace: ' . json_encode($callerTrace2) . PHP_EOL; // $cart_item_id, $product_id, $quantity, $variation_id, $variation, $cart_item_data "
 				error_log($message, 3, $pluginlog);
@@ -201,11 +168,12 @@ class Tonicpow_Public
 				return true;
 		}
 
-		$message = "DYNAMIC HOOK! " . json_encode($arg6) . " caller: " . $actionName . " " . PHP_EOL; // $cart_item_id, $product_id, $quantity, $variation_id, $variation, $cart_item_data "
-		error_log($message, 3, $pluginlog);
+		// todo: commented because it's unreachable code
+		// $message = "DYNAMIC HOOK! " . json_encode($arg6) . " caller: " . $actionName . " " . PHP_EOL; // $cart_item_id, $product_id, $quantity, $variation_id, $variation, $cart_item_data "
+		// error_log($message, 3, $pluginlog);
 
-		$message = "Triggered Conversion from dynamic hook! " . $goal_name . PHP_EOL; // $cart_item_id, $product_id, $quantity, $variation_id, $variation, $cart_item_data "
-		error_log($message, 3, $pluginlog);
+		// $message = "Triggered Conversion from dynamic hook! " . $goal_name . PHP_EOL; // $cart_item_id, $product_id, $quantity, $variation_id, $variation, $cart_item_data "
+		// error_log($message, 3, $pluginlog);
 	}
 
 	public function trigger_conversion($goal_name, $delay_in_minutes, $custom_dimensions, $amount = 0)
@@ -215,6 +183,7 @@ class Tonicpow_Public
 		$api_key = get_option("tonicpow_api_key");
 
 		// Get the tncpw_session
+        // todo: check if set, otherwise empty string?
 		$tncpw_session = $_SESSION["tncpw_session"]; // WC()->session->get('tncpw_session');
 
 		// Trigger tonicpow conversion
@@ -261,15 +230,6 @@ class Tonicpow_Public
 		curl_close($ch);
 		return true;
 	}
-
-	// public function wc_payment_complete()
-	// {
-	// 	$goal_name = get_option("tonicpow_goal_name");
-	// 	$delay_in_minutes = get_option("tonicpow_delay_in_minutes");
-	// 	$custom_dimensions = get_option("tonicpow_custom_dimensions");
-
-	// 	$this->trigger_conversion($goal_name, $delay_in_minutes, $custom_dimensions);
-	// }
 
 	/**
 	 * Register the JavaScript for the public-facing side of the site.
