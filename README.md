@@ -13,6 +13,7 @@
 ## Table of Contents
 - [Installation](#installation)
 - [Features](#features)
+- [Developer Resources](#developer-resources)
 - [Code Standards](#code-standards)
 - [Maintainers](#maintainers)
 - [Contributing](#contributing)
@@ -25,10 +26,15 @@
 
 <br/>
 
-### Features
+## Features
 - Trigger a conversion on an action (IE: order)
 - Record the `tncpw_session` of the visitor
 - Display an Ad Widget
+    
+<br/>
+
+## Developer Resources
+Checkout the [TonicPow API Docs](https://docs.tonicpow.com)
 
 <details>
 <summary><strong><code>Package Dependencies</code></strong></summary>
