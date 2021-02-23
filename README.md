@@ -1,10 +1,10 @@
 <img src="https://github.com/tonicpow/wordpress-plugin/blob/master/.github/IMAGES/tonicpow-logo.png?raw=true" height="100" alt="TonicPow">
 
-> Learn more [about TonicPow](https://tonicpow.com/). Checkout the [TonicPow API Docs](https://docs.tonicpow.com).
+> Learn more [about TonicPow](https://tonicpow.com/?utm_source=github&utm_medium=sponsor-link&utm_campaign=wordpress-plugin&utm_term=wordpress-plugin&utm_content=wordpress-plugin). Checkout the [TonicPow API Docs](https://docs.tonicpow.com).
 
 [![last commit](https://img.shields.io/github/last-commit/tonicpow/wordpress-plugin.svg?style=flat&v=3)](https://github.com/tonicpow/wordpress-plugin/commits/master)
 [![version](https://img.shields.io/github/release-pre/tonicpow/wordpress-plugin.svg?style=flat&v=3)](https://github.com/tonicpow/wordpress-plugin/releases)
-[![php](https://img.shields.io/badge/php-7.4.3-orange.svg?v=3)](https://www.php.net/downloads)
+[![php](https://img.shields.io/badge/php-7.4.3-blue.svg?v=3)](https://www.php.net/downloads)
 [![wordpress](https://img.shields.io/badge/wordpress-5.6.2-blue.svg?v=3)](https://wordpress.org/download/)
 [![Sponsor](https://img.shields.io/badge/sponsor-TonicPow-181717.svg?logo=github&style=flat&v=3)](https://github.com/sponsors/TonicPow)
 [![slack](https://img.shields.io/badge/slack-tonicpow-orange.svg?style=flat&v=3)](https://atlantistic.slack.com/app_redirect?channel=tonicpow)
@@ -27,9 +27,9 @@
 <br/>
 
 ## Features
-- Trigger a conversion on an action (IE: order)
+- Trigger a `conversion` on an action (IE: order)
 - Record the `tncpw_session` of the visitor
-- Display an Ad Widget
+- Display a `widget`
     
 <br/>
 
