@@ -1,18 +1,19 @@
-# TonicPow: Wordpress Plugin
-> The official plugin for interacting with the TonicPow API
+<img src="https://github.com/tonicpow/wordpress-plugin/blob/master/.github/images/tonicpow-logo.png?raw=true" height="100" alt="TonicPow">
 
-[![Release](https://img.shields.io/github/release-pre/tonicpow/wordpress-plugin.svg?logo=github&style=flat&v=2)](https://github.com/tonicpow/wordpress-plugin/releases)
-[![Build Status](https://travis-ci.com/tonicpow/wordpress-plugin.svg?branch=master&v=2)](https://travis-ci.com/tonicpow/wordpress-plugin)
+> Learn more [about TonicPow](https://tonicpow.com/). Checkout the [TonicPow API Docs](https://docs.tonicpow.com).
 
-<br/>
+[![last commit](https://img.shields.io/github/last-commit/tonicpow/wordpress-plugin.svg?style=flat&v=1)](https://github.com/tonicpow/wordpress-plugin/commits/master)
+[![version](https://img.shields.io/github/release-pre/tonicpow/wordpress-plugin.svg?style=flat&v=1)](https://github.com/tonicpow/wordpress-plugin/releases)
+[![php](https://img.shields.io/badge/php-7.4.3-orange.svg)](https://www.php.net/downloads)
+[![wordpress](https://img.shields.io/badge/wordpress-5.6.2-blue.svg)](https://wordpress.org/download/)
+[![Sponsor](https://img.shields.io/badge/sponsor-TonicPow-181717.svg?logo=github&style=flat&v=1)](https://github.com/sponsors/TonicPow)
+[![slack](https://img.shields.io/badge/slack-tonicpow-orange.svg?style=flat&v=1)](https://atlantistic.slack.com/app_redirect?channel=tonicpow)
+
 
 ## Table of Contents
 - [Installation](#installation)
-- [Documentation](#documentation)
-- [Examples & Tests](#examples--tests)
-- [Benchmarks](#benchmarks)
+- [Features](#features)
 - [Code Standards](#code-standards)
-- [Usage](#usage)
 - [Maintainers](#maintainers)
 - [Contributing](#contributing)
 - [License](#license)
@@ -20,22 +21,21 @@
 <br/>
 
 ## Installation
-
-**TODO**
+- Follow the [wordpress guidelines](https://wordpress.org/support/article/managing-plugins/) for installing the plugin.
 
 <br/>
 
-## Documentation
-**TODO**
-
 ### Features
-**TODO**
+- Trigger a conversion on an action (IE: order)
+- Record the `tncpw_session` of the visitor
+- Display an Ad Widget
 
 <details>
 <summary><strong><code>Package Dependencies</code></strong></summary>
 <br/>
 
-**TODO**
+- [Wordpress](https://wordpress.com/)
+- [WooCommerce](https://woocommerce.com/)
 </details>
 
 <details>
@@ -75,23 +75,8 @@ tag-update           Update an existing tag to current commit (tag-update versio
 
 <br/>
 
-## Examples & Tests
-**TODO**
-
-<br/>
-
-## Benchmarks
-**TODO**
-
-<br/>
-
 ## Code Standards
-Read more about this Go project's [code standards](CODE_STANDARDS.md).
-
-<br/>
-
-## Usage
-**TODO**
+Read more about this PHP project's [code standards](CODE_STANDARDS.md).
 
 <br/>
 
@@ -110,7 +95,7 @@ View the [contributing guidelines](CONTRIBUTING.md) and follow the [code of cond
 All kinds of contributions are welcome :raised_hands:! 
 The most basic way to show your support is to star :star2: the project, or to raise issues :speech_balloon:. 
 You can also support this project by [becoming a sponsor on GitHub](https://github.com/sponsors/tonicpow) :clap: 
-or by making a [**bitcoin donation**](https://tonicpow.com/?af=wordpress-plugin) to ensure this journey continues indefinitely! :rocket:
+or by making a [**bitcoin donation**](https://tonicpow.com/?utm_source=github&utm_medium=sponsor-link&utm_campaign=wordpress-plugin&utm_term=wordpress-plugin&utm_content=wordpress-plugin) to ensure this journey continues indefinitely! :rocket:
 
 <br/>
 

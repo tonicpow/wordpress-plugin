@@ -1,9 +1,9 @@
 === Plugin Name ===
 Donate link: https://tonicpow.com
-Tags: comments, spam
-Requires at least: 3.0.1
-Tested up to: 3.4
-Stable tag: 4.3
+Tags: advertisement, ads, conversions, tonicpow
+Requires at least: 5.6.2
+Tested up to: 5.6.2
+Stable tag: 1.0.0
 License: MIT
 License URI: https://github.com/tonicpow/wordpress-plugin/blob/master/LICENSE
 
