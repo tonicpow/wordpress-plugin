@@ -22,6 +22,11 @@
 
 <br/>
 
+## Download
+
+Latest release will always be available for download at this link:
+[https://tonicpow.com/wordpress/tonicpow.zip](https://tonicpow.com/wordpress/tonicpow.zip)
+
 ## Installation
 
 - Follow the [wordpress guidelines](https://wordpress.org/support/article/managing-plugins/) for installing the plugin.
@@ -38,7 +43,7 @@
 
 ## Developer Resources
 
-Checkout the [TonicPow API Docs](https://docs.tonicpow.com)
+Checkout the [Wordpress Plugin Guide](https://tonicpow.com/guides/developers/wordpress-plugin), and the [TonicPow API Docs](https://docs.tonicpow.com)
 
 <details>
 <summary><strong><code>Package Dependencies</code></strong></summary>
