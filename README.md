@@ -12,6 +12,7 @@
 
 ## Table of Contents
 
+- [Download](#download)
 - [Installation](#installation)
 - [Features](#features)
 - [Developer Resources](#developer-resources)
@@ -24,7 +25,7 @@
 
 ## Download
 
-Latest release will always be available for download at this link:
+The latest release will always be available to download at this link:
 [https://tonicpow.com/wordpress/tonicpow.zip](https://tonicpow.com/wordpress/tonicpow.zip)
 
 ## Installation
