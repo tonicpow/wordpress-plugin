@@ -27,6 +27,8 @@
 
 The latest release will always be available to download at this link:
 [https://tonicpow.com/wordpress/tonicpow.zip](https://tonicpow.com/wordpress/tonicpow.zip)
+  
+<br/>
 
 ## Installation
 
