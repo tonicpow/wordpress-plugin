@@ -1,4 +1,4 @@
-<img src="./wordpressBanner.png?raw=true" alt="TonicPow">
+<img src="./.github/IMAGES/github-share-image-v2.png?raw=true" alt="TonicPow Wordpress Plugin">
 <br />
 
 > Learn more [about TonicPow](https://tonicpow.com/?utm_source=github&utm_medium=sponsor-link&utm_campaign=wordpress-plugin&utm_term=wordpress-plugin&utm_content=wordpress-plugin). Checkout the [TonicPow API Docs](https://docs.tonicpow.com).
