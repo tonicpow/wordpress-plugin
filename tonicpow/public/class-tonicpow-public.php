@@ -205,10 +205,25 @@ class Tonicpow_Public
 
 		error_log($payload, 3, $pluginlog);
 
-		$result = curl_exec($ch);
+		//$result = curl_exec($ch);
+
+		$args = array(
+			'body'        => $payload,
+			'timeout'     => '5',
+			'redirection' => '5',
+			'httpversion' => '1.0',
+			'blocking'    => true,
+			'headers'     => array('Content-Type' => 'application/json', 'api_key' => $api_key),
+			'cookies'     => array(),
+		);
+
+		$response = wp_remote_post( $url, $args );
+		$responseCode = wp_remote_retrieve_response_code($response);
+		$result = wp_remote_retrieve_body($response);
+
 		// Check HTTP status code
-		if (!curl_errno($ch)) {
-			switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
+		if (empty($response->errors)) {
+			switch ($http_code = $responseCode) {
 				case 201:  # CREATED
 					$message = "TONICPOW CONVERSION TRIGGERED: " . $api_key . PHP_EOL;
 					break;
@@ -227,7 +242,7 @@ class Tonicpow_Public
 			}
 			error_log($message, 3, $pluginlog);
 		}
-		curl_close($ch);
+		//curl_close($ch);
 		return true;
 	}
 

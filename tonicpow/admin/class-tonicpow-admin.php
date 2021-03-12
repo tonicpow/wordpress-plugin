@@ -88,6 +88,9 @@ class Tonicpow_Admin
 		if ($this->isValidJson($campaignListResponse)) {
 			$obj = json_decode($campaignListResponse);
 			$campaigns = $obj->{'campaigns'};
+			if(empty($campaigns))
+				$campaigns = [];
+
 			echo '
 			<ul>';
 			foreach ($campaigns as $campaign) {
@@ -101,6 +104,7 @@ class Tonicpow_Admin
 						// Add the goal to the goal selector
 						echo '<strong>Goal Name: ' . $goal->{'name'} . '</strong><br />' . PHP_EOL;
 						echo ' (rate: ' . $goal->{'payout_rate'} . ' ' . $campaign->{'currency'} . ' payout type: ' . $goal->{'payout_type'} . ' max_per_visitor: ' . $goal->{'max_per_visitor'} . ' max_per_promoter: ' . $goal->{'max_per_promoter'} . ' payouts: ' .  $goal->{'payouts'} . ')<br />' . PHP_EOL;
+						if(!empty($goal->{'funding_Address'}))
 						echo 'Funding address: ' . $goal->{'funding_Address'} . ' ' . PHP_EOL;
 					}
 					// todo: fix the url below to be dynamic
@@ -138,7 +142,7 @@ class Tonicpow_Admin
 
 			<form method="POST" action="options.php">
 				<?php
-				if ($_SESSION["logged_in"] == true) {
+				if (!empty($_SESSION["logged_in"]) && $_SESSION["logged_in"] == true) {
 					$this->loggedInOutput();
 				}
 				settings_fields('tonicpow_settings');
@@ -222,14 +226,23 @@ class Tonicpow_Admin
 			$ch = curl_init($url);
 			curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json', 'api_key:' . $api_key));
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-			$accountResult = curl_exec($ch);
+			//$accountResult = curl_exec($ch);
+			//var_dump($accountResult);
+
+			$args = array(
+				'headers' => array('Content-Type' => 'application/json', 'api_key' => $api_key)
+			);
+			$response = wp_remote_get( $url, $args );
+			$responseCode = wp_remote_retrieve_response_code($response);
+			$accountResult = wp_remote_retrieve_body($response);
+
 			$account = json_decode($accountResult);
 
 			$_SESSION["logged_in"] = false;
 
 			// Check HTTP status code
-			if (!curl_errno($ch)) {
-				switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
+			if (empty($response->errors)) {
+				switch ($http_code = $responseCode) {
 					case 200:  # CREATED
 						$_SESSION["logged_in"] = true;
 						$_SESSION["account"] = $accountResult;
@@ -243,7 +256,7 @@ class Tonicpow_Admin
 						echo 'Unexpected HTTP code: ', $http_code, "\n<br />\n";
 				}
 			}
-			curl_close($ch);
+			//curl_close($ch);
 
 
 			if ($_SESSION["logged_in"] == true) {
@@ -255,11 +268,20 @@ class Tonicpow_Admin
 					$ch = curl_init($url);
 					curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json',  'api_key:' . $api_key));
 					curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-					$campaignResult = curl_exec($ch);
+
+					//$campaignResult = curl_exec($ch);
+
+					$args = array(
+						'headers' => array('Content-Type' => 'application/json', 'api_key' => $api_key)
+					);
+
+					$response = wp_remote_get( $url, $args );
+					$responseCode = wp_remote_retrieve_response_code($response);
+					$campaignResult = wp_remote_retrieve_body($response);
 
 					// Check HTTP status code
-					if (!curl_errno($ch)) {
-						switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
+					if (empty($response->errors)) {
+						switch ($http_code = $responseCode) {
 							case 200:  # OK
 								# Print response.
 								$_SESSION["campaign_result"] = $campaignResult;
@@ -268,6 +290,8 @@ class Tonicpow_Admin
 									$obj = json_decode($campaignResult);
 
 									$campaigns = $obj->{'campaigns'};
+									if(empty($campaigns))
+										$campaigns = [];
 
 									foreach ($campaigns as $campaign) {
 										if (count($campaign->{'goals'}) > 0) {
@@ -285,7 +309,7 @@ class Tonicpow_Admin
 								$_SESSION["campaign_result"] = false;
 						}
 					}
-					curl_close($ch);
+					//curl_close($ch);
 				}
 			}
 		}
