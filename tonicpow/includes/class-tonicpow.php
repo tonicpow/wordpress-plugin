@@ -36,7 +36,7 @@ class Tonicpow
 	 *
 	 * @since    1.0.0
 	 * @access   protected
-	 * @var      Tonicpow_Loader    $loader    Maintains and registers all hooks for the plugin.
+	 * @var      Tonicpow_Loader $loader Maintains and registers all hooks for the plugin.
 	 */
 	protected $loader;
 
@@ -45,7 +45,7 @@ class Tonicpow
 	 *
 	 * @since    1.0.0
 	 * @access   protected
-	 * @var      string    $plugin_name    The string used to uniquely identify this plugin.
+	 * @var      string $plugin_name The string used to uniquely identify this plugin.
 	 */
 	protected $plugin_name;
 
@@ -54,9 +54,23 @@ class Tonicpow
 	 *
 	 * @since    1.0.0
 	 * @access   protected
-	 * @var      string    $version    The current version of the plugin.
+	 * @var      string $version The current version of the plugin.
 	 */
 	protected $version;
+
+	private static $instance;
+
+	/**
+	 * @return mixed
+	 */
+	public static function getInstance()
+	{
+		if ( ! self::$instance ) {
+			self::$instance = new Tonicpow();
+		}
+
+		return self::$instance;
+	}
 
 	/**
 	 * Define the core functionality of the plugin.
@@ -69,17 +83,12 @@ class Tonicpow
 	 */
 	public function __construct()
 	{
-		if (defined('TONICPOW_VERSION')) {
+		if ( defined( 'TONICPOW_VERSION' ) ) {
 			$this->version = TONICPOW_VERSION;
 		} else {
 			$this->version = '1.0.0';
 		}
 		$this->plugin_name = 'tonicpow';
-
-		// TODO: Error when activating plugin: The plugin generated 36 characters of unexpected output during activation. If you notice “headers already sent” messages, problems with syndication feeds or other issues, try deactivating or removing this plugin.
-		if (!session_id()) {
-			session_start();
-		}
 
 		$this->load_dependencies();
 		$this->set_locale();
@@ -110,24 +119,24 @@ class Tonicpow
 		 * The class responsible for orchestrating the actions and filters of the
 		 * core plugin.
 		 */
-		require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-tonicpow-loader.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-tonicpow-loader.php';
 
 		/**
 		 * The class responsible for defining internationalization functionality
 		 * of the plugin.
 		 */
-		require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-tonicpow-i18n.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-tonicpow-i18n.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the admin area.
 		 */
-		require_once plugin_dir_path(dirname(__FILE__)) . 'admin/class-tonicpow-admin.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-tonicpow-admin.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the public-facing
 		 * side of the site.
 		 */
-		require_once plugin_dir_path(dirname(__FILE__)) . 'public/class-tonicpow-public.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-tonicpow-public.php';
 
 		$this->loader = new Tonicpow_Loader();
 	}
@@ -146,7 +155,7 @@ class Tonicpow
 
 		$plugin_i18n = new Tonicpow_i18n();
 
-		$this->loader->add_action('plugins_loaded', $plugin_i18n, 'load_plugin_textdomain');
+		$this->loader->add_action( 'plugins_loaded', $plugin_i18n, 'load_plugin_textdomain' );
 	}
 
 	/**
@@ -159,14 +168,14 @@ class Tonicpow
 	private function define_admin_hooks()
 	{
 
-		$plugin_admin = new Tonicpow_Admin($this->get_plugin_name(), $this->get_version());
+		$plugin_admin = new Tonicpow_Admin( $this->get_plugin_name(), $this->get_version() );
 
-		$this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_styles');
-		$this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts');
-		$this->loader->add_action('admin_menu', $plugin_admin, 'admin_menu');
-		$this->loader->add_action('admin_init', $plugin_admin, 'init');
-		$this->loader->add_action('admin_init', $plugin_admin, 'setup_sections');
-		$this->loader->add_action('admin_init', $plugin_admin, 'setup_fields');
+		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
+		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+		$this->loader->add_action( 'admin_menu', $plugin_admin, 'admin_menu' );
+		$this->loader->add_action( 'admin_init', $plugin_admin, 'init' );
+		$this->loader->add_action( 'admin_init', $plugin_admin, 'setup_sections' );
+		$this->loader->add_action( 'admin_init', $plugin_admin, 'setup_fields' );
 	}
 
 	/**
@@ -179,32 +188,32 @@ class Tonicpow
 	private function define_public_hooks()
 	{
 
-		$plugin_public = new Tonicpow_Public($this->get_plugin_name(), $this->get_version());
+		$plugin_public = new Tonicpow_Public( $this->get_plugin_name(), $this->get_version() );
 
-		$this->loader->add_action('wp_enqueue_scripts', $plugin_public, 'enqueue_styles');
-		$this->loader->add_action('wp_enqueue_scripts', $plugin_public, 'enqueue_scripts');
-		$this->loader->add_action('init', $plugin_public, 'init');
+		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
+		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
+		$this->loader->add_action( 'init', $plugin_public, 'init' );
 
 		// Register dynamic hook
-		$hook_name = get_option('tonicpow_hook_name');
-		switch ($hook_name[0]) {
+		$hook_name = get_option( 'tonicpow_hook_name' );
+		switch ( $hook_name[0] ) {
 			case "media_upoload_video":
 			case "media_upoload_file":
 			case "media_upoload_image":
-				$this->loader->add_action($hook_name[0], $plugin_public, 'dynamicHook', 10, 1);
+				$this->loader->add_action( $hook_name[0], $plugin_public, 'dynamicHook', 10, 1 );
 				break;
 			case "comment_post":
-				$this->loader->add_action($hook_name[0], $plugin_public, 'dynamicHook', 10, 2);
+				$this->loader->add_action( $hook_name[0], $plugin_public, 'dynamicHook', 10, 2 );
 				break;
 			case "wp_login":
 			case 'woocommerce_payment_complete':
-				$this->loader->add_action($hook_name[0], $plugin_public, 'dynamicHook', 10, 3);
+				$this->loader->add_action( $hook_name[0], $plugin_public, 'dynamicHook', 10, 3 );
 				break;
 			case 'woocommerce_add_to_cart':
-				$this->loader->add_action($hook_name[0], $plugin_public, 'dynamicHook', 10, 6);
+				$this->loader->add_action( $hook_name[0], $plugin_public, 'dynamicHook', 10, 6 );
 				break;
 			default:
-				$this->loader->add_action($hook_name[0], $plugin_public, 'dynamicHook');
+				$this->loader->add_action( $hook_name[0], $plugin_public, 'dynamicHook' );
 		}
 	}
 
@@ -222,8 +231,8 @@ class Tonicpow
 	 * The name of the plugin used to uniquely identify it within the context of
 	 * WordPress and to define internationalization functionality.
 	 *
-	 * @since     1.0.0
 	 * @return    string    The name of the plugin.
+	 * @since     1.0.0
 	 */
 	public function get_plugin_name()
 	{
@@ -233,8 +242,8 @@ class Tonicpow
 	/**
 	 * The reference to the class that orchestrates the hooks with the plugin.
 	 *
-	 * @since     1.0.0
 	 * @return    Tonicpow_Loader    Orchestrates the hooks of the plugin.
+	 * @since     1.0.0
 	 */
 	public function get_loader()
 	{
@@ -244,11 +253,22 @@ class Tonicpow
 	/**
 	 * Retrieve the version number of the plugin.
 	 *
-	 * @since     1.0.0
 	 * @return    string    The version number of the plugin.
+	 * @since     1.0.0
 	 */
 	public function get_version()
 	{
 		return $this->version;
+	}
+
+	public function session( $key = false, $value = false )
+	{
+		global $wp_session;
+
+		if ( $key !== false ) {
+			$wp_session[ $key ] = $value;
+		}
+
+		return $wp_session;
 	}
 }
