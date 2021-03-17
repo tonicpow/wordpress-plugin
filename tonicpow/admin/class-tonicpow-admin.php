@@ -115,7 +115,7 @@ class Tonicpow_Admin
 					echo '<a target="_blank" href="https://tonicpow.com/app/dashboard/ad-profiles/' . $campaign->{'advertiser_profile_id'} . '/campaigns/' . $campaign->{'id'} . '/goals">' . esc_html( __( 'Edit', TONICPOW ) ) . '</a>' . PHP_EOL;
 					echo '</li>' . PHP_EOL;
 				} else {
-					echo '<li style="border: 1px solid indianred; border-radius: 6px; margin-bottom: .25rem; padding: .25rem;"><strong>' . $campaign->{'title'} . '</strong> ' . esc_html( __( 'has no conversion goals.', TONICPOW ) ) . ' <a target="_blank" href="https://web.staging.tonicpow.com/app/dashboard/ad-profiles/' . $campaign->{'advertiser_profile_id'} . '/campaigns/' . $campaign->{'id'} . '/goals">' . esc_html( __( 'Set one up', TONICPOW ) ) . '</a></li>' . PHP_EOL;
+					echo '<li style="border: 1px solid indianred; border-radius: 6px; margin-bottom: .25rem; padding: .25rem;"><strong>' . $campaign->{'title'} . '</strong> ' . esc_html( __( 'has no conversion goals.', TONICPOW ) ) . ' <a target="_blank" href="https://tonicpow.com/app/dashboard/ad-profiles/' . $campaign->{'advertiser_profile_id'} . '/campaigns/' . $campaign->{'id'} . '/goals">' . esc_html( __( 'Set one up', TONICPOW ) ) . '</a></li>' . PHP_EOL;
 				}
 			}
 			echo '</ul>

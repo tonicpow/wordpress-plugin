@@ -197,9 +197,9 @@ class Tonicpow
 		// Register dynamic hook
 		$hook_name = get_option( 'tonicpow_hook_name' );
 		switch ( $hook_name[0] ) {
-			case "media_upoload_video":
-			case "media_upoload_file":
-			case "media_upoload_image":
+			case "media_upload_video":
+			case "media_upload_file":
+			case "media_upload_image":
 				$this->loader->add_action( $hook_name[0], $plugin_public, 'dynamicHook', 10, 1 );
 				break;
 			case "comment_post":
