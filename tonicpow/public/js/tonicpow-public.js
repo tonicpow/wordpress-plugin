@@ -2,7 +2,7 @@
   "use strict";
 
   let sc = document.createElement("script");
-  sc.setAttribute("src", "https://tonicpow.com/scripts/widget.js");
+  sc.setAttribute("src", "https://tonicpow.com/scripts/tonicpow.js");
   sc.setAttribute("type", "application/javascript");
   sc.onload = function () {
     console.log("TonicPow loaded");
