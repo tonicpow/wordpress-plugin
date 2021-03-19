@@ -34,8 +34,6 @@ class Tonicpow_Activator
 	 */
 	public static function activate()
 	{
-		$pluginlog = '/var/www/html/wp-content/plugins/tonicpow/debug.log'; // plugin_dir_path(__FILE__).'debug.log';
-		$message = 'WC-TONICPOW-ADMIN activating' . PHP_EOL;
-		error_log($message, 3, $pluginlog);
+		// Do not output anything here, even to log will cause an error on activate
 	}
 }
