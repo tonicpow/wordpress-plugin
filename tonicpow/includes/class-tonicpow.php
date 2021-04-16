@@ -94,6 +94,14 @@ class Tonicpow
 		$this->set_locale();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
+
+		if (!defined('TONICPOW_DEBUG')) {
+            if (get_option('tncpw_debug')) {
+                define('TONICPOW_DEBUG', true);
+            } else {
+                define('TONICPOW_DEBUG', false);
+            }
+        }
 	}
 
 	/**
@@ -176,6 +184,7 @@ class Tonicpow
 		$this->loader->add_action( 'admin_init', $plugin_admin, 'init' );
 		$this->loader->add_action( 'admin_init', $plugin_admin, 'setup_sections' );
 		$this->loader->add_action( 'admin_init', $plugin_admin, 'setup_fields' );
+		$this->loader->add_action( 'wp_ajax_tonicpow_test_goal', $plugin_admin, 'test_goal_trigger' );
 	}
 
 	/**
@@ -194,26 +203,35 @@ class Tonicpow
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 		$this->loader->add_action( 'init', $plugin_public, 'init' );
 
+		if (class_exists( 'WooCommerce' )) {
+		    $this->loader->add_action( 'woocommerce_checkout_create_order', $plugin_public, 'woocommerce_checkout_create_order' );
+		}
+
 		// Register dynamic hook
-		$hook_name = get_option( 'tonicpow_hook_name' );
-		switch ( $hook_name[0] ) {
-			case "media_upload_video":
-			case "media_upload_file":
-			case "media_upload_image":
-				$this->loader->add_action( $hook_name[0], $plugin_public, 'dynamicHook', 10, 1 );
-				break;
-			case "comment_post":
-				$this->loader->add_action( $hook_name[0], $plugin_public, 'dynamicHook', 10, 2 );
-				break;
-			case "wp_login":
-			case 'woocommerce_payment_complete':
-				$this->loader->add_action( $hook_name[0], $plugin_public, 'dynamicHook', 10, 3 );
-				break;
-			case 'woocommerce_add_to_cart':
-				$this->loader->add_action( $hook_name[0], $plugin_public, 'dynamicHook', 10, 6 );
-				break;
-			default:
-				$this->loader->add_action( $hook_name[0], $plugin_public, 'dynamicHook' );
+		$goals = get_option('tonicpow_goals') ?: [];
+		foreach($goals as $goal) {
+		    $hook_name = $goal['hook_name'];
+            if ($hook_name) {
+                switch ( $hook_name ) {
+                    case "media_upload_video":
+                    case "media_upload_file":
+                    case "media_upload_image":
+                        $this->loader->add_action( $hook_name, $plugin_public, 'dynamicHook', 10, 1 );
+                        break;
+                    case "comment_post":
+                        $this->loader->add_action( $hook_name, $plugin_public, 'dynamicHook', 10, 2 );
+                        break;
+                    case "wp_login":
+                    case 'woocommerce_payment_complete':
+                        $this->loader->add_action( $hook_name, $plugin_public, 'dynamicHook', 10, 3 );
+                        break;
+                    case 'woocommerce_add_to_cart':
+                        $this->loader->add_action( $hook_name, $plugin_public, 'dynamicHook', 10, 6 );
+                        break;
+                    default:
+                        $this->loader->add_action( $hook_name, $plugin_public, 'dynamicHook' );
+                }
+            }
 		}
 	}
 
