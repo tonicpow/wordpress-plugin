@@ -41,6 +41,14 @@ class Tonicpow_Admin
 	 */
 	private $version;
 
+    /**
+     * Whether to show all the hooks available, or just the curated selecetion
+     * This will initialize the select2 library for easier selection
+    */
+	private $showAllHooks = false;
+
+    private $authErrors = [];
+
 	/**
 	 * Initialize the class and set its properties.
 	 *
@@ -54,27 +62,17 @@ class Tonicpow_Admin
 
 		$this->plugin_name = $plugin_name;
 		$this->version     = $version;
+
+		if (get_option('tonicpow_advanced_settings')) {
+		    $this->showAllHooks = true;
+		}
 	}
 
 	public function init()
 	{
-
 		$pluginlog = plugin_dir_path(__FILE__) . 'debug.log';
 
 		TONICPOW()->session("available_goals", array());
-
-		if (isset($_GET["tncpw_session"])) {
-
-			TONICPOW()->session("tncpw_session", sanitize_text_field($_GET["tncpw_session"]));
-
-			// Set Woo Commerce session
-			// TODO: Check woo commerce is installed (make plugin a requirement?)
-			WC()->session->set('tncpw_session', TONICPOW()->session()["tncpw_session"]);
-
-			// todo: remove error logs
-			$message = "WP_LOADED_TONICPOW" . $_SERVER['REQUEST_URI'] . " - TNCPW_SESSION: " . TONICPOW()->session()["tncpw_session"] . PHP_EOL;
-			error_log($message, 3, $pluginlog);
-		}
 	}
 
 	public function isValidJson($strJson)
@@ -176,14 +174,32 @@ class Tonicpow_Admin
 				echo esc_html(__('Your TonicPow app configuration', TONICPOW));
 				break;
 			case 'conversion_section':
-				echo esc_html(__('Configure goal conversion events', TONICPOW));
+                if (!TONICPOW()->session()["logged_in"]) {
+                    echo "<b>You are not logged in yet. Fill in a valid API key, save and your goals should be shown</b><br/>";
+                    if ($this->authErrors && count($this->authErrors > 0)) {
+                        echo "Errors: <br/>";
+                        echo " - " . implode($this->authErrors, '<br/>');
+                        echo "<br/><br/>";
+                    }
+                } else {
+    				echo esc_html(__('Configure goal conversion events', TONICPOW));
+                }
 				break;
 		}
 	}
 
+	public function get_option_value($id, $goal, $goal_variable) {
+	    if ($goal && $goal_variable) {
+	        $goals = get_option('tonicpow_goals');
+	        return @$goals[$goal][$goal_variable];
+	    }
+
+	    return get_option($id);
+	}
+
 	public function field_callback($arguments)
 	{
-		$value = get_option($arguments['uid']); // Get the current value, if there is one
+		$value = $this->get_option_value($arguments['uid'], $arguments['goal'], $arguments['goal_variable']); // Get the current value, if there is one
 		if (!$value) { // If no value exists
 			$value = $arguments['default']; // Set to our default
 		}
@@ -196,16 +212,32 @@ class Tonicpow_Admin
 					$attributes     = '';
 					$options_markup = '';
 					foreach ($arguments['options'] as $key => $label) {
-						$options_markup .= sprintf('<option value="%s" %s>%s</option>', $key, selected($value[array_search($key, $value, true)], $key, false), $label);
+						$options_markup .= sprintf('<option value="%s" %s>%s</option>', $key, selected($value, $key, false), $label);
 					}
 					if ($arguments['type'] === 'multiselect') {
 						$attributes = ' multiple="multiple" ';
 					}
-					printf('<select name="%1$s[]" id="%1$s" %2$s>%3$s</select>', $arguments['uid'], $attributes, $options_markup);
+					printf('<select name="%1$s" id="%1$s" %2$s>%3$s</select>', $arguments['uid'], $attributes, $options_markup);
 				}
 				break;
 			case 'text': // If it is a text field
 				printf('<input name="%1$s" id="%1$s" type="%2$s" placeholder="%3$s" value="%4$s" />', $arguments['uid'], $arguments['type'], $arguments['placeholder'], $value);
+				break;
+			case 'checkbox': // If it is a checkbox field
+				printf('<input name="%1$s" id="%1$s" type="checkbox" value="1" %2$s />', $arguments['uid'], ($value ? 'checked' : ''));
+				break;
+            case 'fieldset':
+				printf('<fieldset>');
+				foreach($arguments['fields'] as $field) {
+    				printf('<div class="fieldset_field">');
+				    if ($field['label']) {
+				        printf('<div class="sub-field-label">%1$s</div>', $field['label']);
+				    }
+				    $this->field_callback($field);
+    				printf('</div>');
+				}
+				printf('<input type="button" name="test" class="button button-secondary" value="Test goal trigger" id="trigger_' . $arguments['goal'] . '" onClick="tonicpow_test_trigger(\'' . $arguments['goal'] . '\');">');
+				printf('</fieldset>');
 				break;
 		}
 
@@ -224,18 +256,12 @@ class Tonicpow_Admin
 	public function auth()
 	{
 		$api_key      = get_option("tonicpow_api_key");
-		$base_api_url = get_option("tonicpow_base_api_url");
+		$base_api_url = get_option("tonicpow_base_api_url") ?: 'https://api.tonicpow.com/v1/';
 
 		if (strlen($api_key) === 32) {
 
 			// CHECK THE KEY
 			$url = $base_api_url . "users/account";
-
-			$ch = curl_init($url);
-			curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json', 'api_key:' . $api_key));
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-			//$accountResult = curl_exec($ch);
-			//var_dump($accountResult);
 
 			$args          = array(
 				'headers' => array('Content-Type' => 'application/json', 'api_key' => $api_key)
@@ -254,18 +280,19 @@ class Tonicpow_Admin
 					case 200:  # CREATED
 						TONICPOW()->session("logged_in", true);
 						TONICPOW()->session("account", $accountResult);
+						$this->authErrors = [];
 						break;
 					case 401:
 						TONICPOW()->session("logged_in", false);
 						TONICPOW()->session("account", false);
-						echo esc_html(__("You are not logged in.", TONICPOW));
+						//echo esc_html(__("You are not logged in.", TONICPOW));
+						$this->authErrors[] = "You are not logged in.";
 						break;
 					default:
-						echo '' . esc_html(__('Unexpected HTTP code:', TONICPOW)) . ' ', $http_code, "\n<br />\n";
+						//echo '' . esc_html(__('Unexpected HTTP code:', TONICPOW)) . ' ', $http_code, "\n<br />\n";
+						$this->authErrors[] = "Unexpected HTTP code: " . $http_code;
 				}
 			}
-			//curl_close($ch);
-
 
 			if (TONICPOW()->session()["logged_in"] == true) {
 				foreach ($account->{'advertiser_profiles'} as $advertiserProfile) {
@@ -341,14 +368,26 @@ class Tonicpow_Admin
 
 		global $wp_filter;
 
-		$toc = [];
+        $curatedHooks = [
+            "woocommerce_payment_complete",
+            "woocommerce_add_to_cart",
+            "wp_login",
+            "media_upload_image",
+            "media_upload_file",
+            "media_upload_video",
+            "comment_approved_comment",
+            "comment_post"
+        ];
+
+		$toc = [
+		    '' => '',
+		    'wp_load' => 'wp_load'
+		];
 		foreach ($wp_filter as $key => $val) {
-			// $out .= "<h2 id=$name>$name</h2><pre>" . implode("\n\n", $arr_vals) . '</pre>';
-			if ($key == "woocommerce_payment_complete" || $key == "woocommerce_add_to_cart" || $key == "wp_login" || $key == "media_upload_image" || $key == "media_upload_file" || $key == "media_upload_video" || $key == "comment_approved_comment" || $key == "comment_post") {
+			if ($this->showAllHooks || in_array($key, $curatedHooks)) {
 				$toc[$key] = $key;
 			}
 		}
-
 		ksort($toc);
 
 		$goals = TONICPOW()->session()["available_goals"];
@@ -366,75 +405,105 @@ class Tonicpow_Admin
 				'default'      => ''
 			),
 			array(
-				'uid'          => 'tonicpow_base_api_url',
-				'label'        => esc_html(__('API URL', TONICPOW)),
+				'uid'          => 'tonicpow_advanced_settings',
+				'label'        => esc_html(__('Advanced settings', TONICPOW)),
 				'section'      => 'app_section',
-				'type'         => 'text',
-				'options'      => false,
-				'placeholder'  => esc_html(__('placeholder', TONICPOW)),
-				'helper'       => esc_html(__('Including version and trailing slash', TONICPOW)),
-				'supplemental' => esc_html(__('The base url for all tonicpow API calls.', TONICPOW)),
-				'default'      => 'https://api.tonicpow.com/v1/'
+				'type'         => 'checkbox',
+				'helper'       => esc_html(__('Check this to show advanced settings and all hooks', TONICPOW)),
+                'supplemental' => esc_html(__('You need to save before the changes are visible.', TONICPOW)),
+				'default'      => false
 			),
-			array(
-				'uid'          => 'tonicpow_goal_name',
-				'label'        => esc_html(__('Goal Name', TONICPOW)),
-				'section'      => 'conversion_section',
-				'type'         => 'select',
-				'options'      => $goals,
-				'placeholder'  => esc_html(__('order', TONICPOW)),
-				'helper'       => esc_html(__('', TONICPOW)),
-				'supplemental' => esc_html(__('Which goal should be converted', TONICPOW)),
-				'default'      => array(0 => 'none')
-			),
-			array(
-				'uid'          => 'tonicpow_hook_name',
-				'label'        => esc_html(__('Hook Name', TONICPOW)),
-				'section'      => 'conversion_section',
-				'type'         => 'select',
-				'options'      => $toc,
-				'placeholder'  => esc_html(__('order', TONICPOW)),
-				'helper'       => esc_html(__('Triggers a conversion', TONICPOW)),
-				'supplemental' => esc_html(__('Contact us to request support for new hooks.', TONICPOW)),
-				'default'      => array(0 => 'woocommerce_payment_complete')
-			),
-			array(
-				'uid'          => 'tonicpow_delay_in_minutes',
-				'label'        => esc_html(__('Delay', TONICPOW)),
-				'section'      => 'conversion_section',
-				'type'         => 'text',
-				'options'      => false,
-				'placeholder'  => esc_html(__('0', TONICPOW)),
-				'helper'       => esc_html(__('in minutes', TONICPOW)),
-				'supplemental' => esc_html(__('How long to wait before triggering the conversion payout.', TONICPOW)),
-				'default'      => '0'
-			),
-			array(
-				'uid'          => 'tonicpow_custom_dimensions',
-				'label'        => esc_html(__('Custom Dimensions', TONICPOW)),
-				'section'      => 'conversion_section',
-				'type'         => 'text',
-				'options'      => false,
-				'placeholder'  => esc_html(__('', TONICPOW)),
-				'helper'       => esc_html(__('Optional', TONICPOW)),
-				'supplemental' => esc_html(__('Custom data for analytics', TONICPOW)),
-				'default'      => ''
-			)
 		);
+
+        if (get_option('tonicpow_advanced_settings')) {
+        	$fields[] = array(
+                'uid'          => 'tonicpow_base_api_url',
+                'label'        => esc_html(__('API URL', TONICPOW)),
+                'section'      => 'app_section',
+                'type'         => 'text',
+                'options'      => false,
+                'placeholder'  => esc_html(__('placeholder', TONICPOW)),
+                'helper'       => esc_html(__('Including version and trailing slash', TONICPOW)),
+                'supplemental' => esc_html(__('The base url for all tonicpow API calls.', TONICPOW)),
+                'default'      => 'https://api.tonicpow.com/v1/'
+            );
+            $error_log_location = ini_get('error_log');
+        	$fields[] = array(
+                'uid'          => 'tncpw_debug',
+                'label'        => esc_html(__('Debugging on', TONICPOW)),
+                'section'      => 'app_section',
+                'type'         => 'checkbox',
+                'helper'       => esc_html(__('Check this to enable debugging on tonic pow requests', TONICPOW)),
+                'supplemental' => esc_html(__("Debug information is written to the error_log at $error_log_location.", TONICPOW)),
+                'default'      => false
+            );
+        }
+
+        foreach($goals as $goal) {
+            $goalId = preg_replace("/[^A-Za-z0-9-]/", '_', $goal);
+            $fields[] = array(
+                'uid'          => 'tonicpow_goal_' . $goalId,
+                'label'        => esc_html(__('Goal: ' . $goal, TONICPOW)),
+                'section'      => 'conversion_section',
+                'goal'         => $goal,
+                'type' => 'fieldset',
+                'fields' => array(
+                    array(
+                        'uid'          => 'tonicpow_goals[' . $goal . '][hook_name]',
+                        'goal'         => $goal,
+                        'goal_variable'=> 'hook_name',
+                        'label'        => esc_html(__('Hook Name', TONICPOW)),
+                        'section'      => 'conversion_section',
+                        'type'         => 'select',
+                        'options'      => $toc,
+                        'placeholder'  => esc_html(__('order', TONICPOW)),
+                        'helper'       => esc_html(__('Triggers a conversion', TONICPOW)),
+                        'supplemental' => esc_html(__('Contact us to request support for new hooks.', TONICPOW)),
+                        'default'      => array(0 => 'woocommerce_payment_complete')
+                    ),
+                    array(
+                        'uid'          => 'tonicpow_goals[' . $goal . '][delay_in_minutes]',
+                        'goal'         => $goal,
+                        'goal_variable'=> 'delay_in_minutes',
+                        'label'        => esc_html(__('Delay', TONICPOW)),
+                        'section'      => 'conversion_section',
+                        'type'         => 'text',
+                        'options'      => false,
+                        'placeholder'  => esc_html(__('0', TONICPOW)),
+                        'helper'       => esc_html(__('in minutes', TONICPOW)),
+                        'supplemental' => esc_html(__('How long to wait before triggering the conversion payout.', TONICPOW)),
+                        'default'      => '0'
+                    ),
+                    array(
+                        'uid'          => 'tonicpow_goals[' . $goal . '][custom_dimensions]',
+                        'goal'         => $goal,
+                        'goal_variable'=> 'custom_dimensions',
+                        'label'        => esc_html(__('Custom Dimensions', TONICPOW)),
+                        'section'      => 'conversion_section',
+                        'type'         => 'text',
+                        'options'      => false,
+                        'placeholder'  => esc_html(__('', TONICPOW)),
+                        'helper'       => esc_html(__('Optional', TONICPOW)),
+                        'supplemental' => esc_html(__('Custom data for analytics', TONICPOW)),
+                        'default'      => ''
+                    )
+                )
+            );
+        }
 
 		foreach ($fields as $field) {
 			$pluginlog = plugin_dir_path(__FILE__) . 'debug.log';
-
-			// todo: remove error logs
-			$message = "FIELD " . $field['section'] . PHP_EOL;
-			error_log($message, 3, $pluginlog);
 
 			add_settings_field($field['uid'], $field['label'], array(
 				$this,
 				'field_callback'
 			), 'tonicpow_settings', $field['section'], $field);
-			register_setting('tonicpow_settings', $field['uid']);
+
+			if (strpos($field['uid'], '[') === false) {
+    			register_setting('tonicpow_settings', $field['uid']);
+			}
 		}
+        register_setting('tonicpow_settings', 'tonicpow_goals');
 	}
 
 	public function setup_sections()
@@ -461,17 +530,84 @@ class Tonicpow_Admin
 		$capability = 'manage_options';
 		$slug       = 'tonicpow';
 		$callback   = array($this, 'output');
-		add_submenu_page('options-general.php', $page_title, $menu_title, $capability, $slug, $callback);
+		$icon_url   = '/wp-content/plugins/tonicpow/assets/icon-20.png';
+		add_menu_page($page_title, $menu_title, $capability, $slug, $callback, $icon_url);
+	}
 
-		// Woocommerce submenu and page
-		$wc_callback   = array($this, 'wc_output');
-		$wc_capability = 'manage_woocommerce';
-		$wc_menu_title = esc_html(__('TonicPow', TONICPOW));
-		$wc_page_title = esc_html(__('WooCommerce TonicPow', TONICPOW));
-		$wc_parent     = 'woocommerce';
-		$wc_slug       = "wc_tonicpow";
+	public function test_goal_trigger()
+	{
+	    $goal              = $_POST['goal'];
+	    $hook_name         = $_POST['hook_name'];
+	    $delay_in_minutes  = $_POST['delay_in_minutes'] ?: 0;
+	    $custom_dimensions = $_POST['custom_dimensions'] ?: '';
 
-		add_submenu_page($wc_parent, $wc_page_title, $wc_menu_title, $wc_capability, $wc_slug, $wc_callback);
+	    if (!$goal) {
+            wp_send_json( Array(
+                'error' => 'No goal selected',
+                'data' => $_POST
+            ) );
+            wp_die(); // All ajax handlers die when finished
+	    }
+
+	    if (!$hook_name) {
+            wp_send_json( Array(
+                'error' => 'No hook selected',
+                'data' => $_POST
+            ) );
+            wp_die(); // All ajax handlers die when finished
+	    }
+
+		$api_key       = get_option("tonicpow_api_key");
+		$tncpw_session = 'test_goal_trigger-00000000000000';
+
+		// Trigger tonicpow conversion
+		$base_api_url = get_option("tonicpow_base_api_url") ?: 'https://api.tonicpow.com/v1/';
+		$url          = $base_api_url . "conversions";
+
+		$payload = json_encode(array(
+			"name"              => $goal,
+			"tncpw_session"     => $tncpw_session,
+			"delay_in_minutes"  => $delay_in_minutes,
+			"custom_dimensions" => $custom_dimensions,
+			"amount"            => 0
+		));
+
+	    $args = array(
+            'body'        => $payload,
+            'timeout'     => '5',
+            'redirection' => '5',
+            'httpversion' => '1.0',
+            'blocking'    => true,
+            'headers'     => array('Content-Type' => 'application/json', 'api_key' => $api_key),
+            'cookies'     => array(),
+        );
+
+	    $response = [];
+
+        $post_response = wp_remote_post($url, $args);
+        if (is_wp_error($post_response)) {
+            $message = esc_html(__('HTTP ERROR: ' . $post_response->get_error_message())) . PHP_EOL;
+
+            $response['error'] = $message;
+            $response['data'] = $_POST;
+        } else {
+            $http_code = wp_remote_retrieve_response_code($post_response);
+            $result    = wp_remote_retrieve_body($post_response);
+            $resultObj = null;
+    		if ($this->isValidJson($result)) {
+			    $resultObj = json_decode($result);
+            }
+
+            if ($http_code === 200 || $http_code === 201) {
+                $response['message'] = 'Your hook is working correctly';
+            } else {
+                $response['error'] = (is_object($resultObj) ? $resultObj->message  : 'An unknown error occurred' ) . ' (' . $http_code . ')';
+                $response['data'] = $resultObj ?: $result;
+            }
+        }
+
+        wp_send_json( $response );
+        wp_die(); // All ajax handlers die when finished
 	}
 
 	/**
@@ -495,6 +631,9 @@ class Tonicpow_Admin
 		 */
 
 		wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__) . 'css/tonicpow-admin.css', array(), $this->version, 'all');
+        if ($this->showAllHooks) {
+            wp_enqueue_style('select2', 'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css' );
+        }
 	}
 
 	/**
@@ -517,6 +656,9 @@ class Tonicpow_Admin
 		 * class.
 		 */
 
-		wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/tonicpow-admin.js', array('jquery'), $this->version, false);
+        if ($this->showAllHooks) {
+        	wp_enqueue_script('select2', 'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js', array('jquery') );
+        }
+		wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/tonicpow-admin.js', array('jquery'), $this->version, true);
 	}
 }
