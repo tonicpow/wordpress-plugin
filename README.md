@@ -38,7 +38,7 @@ The latest release will always be available to download at this link:
 
 ## Features
 
-- Trigger a `conversion` on an action (IE: order)
+- Trigger a `conversion` on an action (I.E.,: order)
 - Record the `tncpw_session` of the visitor
 - Display a `widget`
 
@@ -60,9 +60,9 @@ Checkout the [Wordpress Plugin Guide](https://tonicpow.com/guides/developers/wor
 <summary><strong><code>Library Deployment</code></strong></summary>
 <br/>
 
-[goreleaser](https://github.com/goreleaser/goreleaser) for easy binary or library deployment to Github and can be installed via: `brew install goreleaser`.
+[goreleaser](https://github.com/goreleaser/goreleaser) for easy binary or library deployment to GitHub and can be installed via: `brew install goreleaser`.
 
-The [.goreleaser.yml](.goreleaser.yml) file is used to configure [goreleaser](https://github.com/goreleaser/goreleaser).
+The [.goreleaser.yml](.goreleaser.yml) file is the configuration for [goreleaser](https://github.com/goreleaser/goreleaser).
 
 Use `make release-snap` to create a snapshot version of the release, and finally `make release` to ship to production.
 
@@ -99,7 +99,7 @@ tag-update           Update an existing tag to current commit (tag-update versio
 
 ## Code Standards
 
-Read more about this PHP project's [code standards](CODE_STANDARDS.md).
+Read more about this PHP project's [code standards](.github/CODE_STANDARDS.md).
 
 <br/>
 
@@ -113,7 +113,7 @@ Read more about this PHP project's [code standards](CODE_STANDARDS.md).
 
 ## Contributing
 
-View the [contributing guidelines](CONTRIBUTING.md) and follow the [code of conduct](CODE_OF_CONDUCT.md).
+View the [contributing guidelines](.github/CONTRIBUTING.md) and follow the [code of conduct](.github/CODE_OF_CONDUCT.md).
 
 ### How can I help?
 
@@ -121,9 +121,11 @@ All kinds of contributions are welcome :raised_hands:!
 The most basic way to show your support is to star :star2: the project, or to raise issues :speech_balloon:.
 You can also support this project by [becoming a sponsor on GitHub](https://github.com/sponsors/tonicpow) :clap:
 or by making a [**bitcoin donation**](https://tonicpow.com/?utm_source=github&utm_medium=sponsor-link&utm_campaign=wordpress-plugin&utm_term=wordpress-plugin&utm_content=wordpress-plugin) to ensure this journey continues indefinitely! :rocket:
+     
+[![Stars](https://img.shields.io/github/stars/tonicpow/wordpress-plugin?label=Please%20like%20us&style=social)](https://github.com/tonicpow/wordpress-plugin/stargazers)
 
 <br/>
 
 ## License
 
-![License](https://img.shields.io/github/license/tonicpow/wordpress-plugin.svg?style=flat&v=3)
+[![License](https://img.shields.io/github/license/tonicpow/wordpress-plugin.svg?style=flat&v=3)](LICENSE)
