@@ -1,4 +1,4 @@
-# Basic dependabot.yml to update github actions
+# Basic dependabot.yml to update GitHub actions
 
 version: 2
 updates:
