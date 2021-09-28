@@ -7,6 +7,7 @@
 [![version](https://img.shields.io/github/release-pre/tonicpow/wordpress-plugin.svg?style=flat&v=3)](https://github.com/tonicpow/wordpress-plugin/releases)
 [![php](https://img.shields.io/badge/php-7.4.3-blue.svg?v=3)](https://www.php.net/downloads)
 [![wordpress](https://img.shields.io/badge/wordpress-5.6.2-blue.svg?v=3)](https://wordpress.org/download/)
+[![Mergify Status](https://img.shields.io/endpoint.svg?url=https://gh.mergify.io/badges/tonicpow/wordpress-plugin&style=flat&v=3)](https://mergify.io)
 [![Sponsor](https://img.shields.io/badge/sponsor-TonicPow-181717.svg?logo=github&style=flat&v=3)](https://github.com/sponsors/TonicPow)
 [![slack](https://img.shields.io/badge/slack-tonicpow-orange.svg?style=flat&v=3)](https://atlantistic.slack.com/app_redirect?channel=tonicpow)
 
