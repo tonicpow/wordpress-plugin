@@ -260,7 +260,10 @@ class Tonicpow_Admin
 
 		if (strlen($api_key) === 32) {
 
-			// CHECK THE KEY
+
+            // todo: this needs to be a [LIST] of advertisers (NOT a user/account request)
+
+            // CHECK THE KEY
 			$url = $base_api_url . "users/account";
 
 			$args          = array(
