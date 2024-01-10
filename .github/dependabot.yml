@@ -11,9 +11,9 @@ updates:
       interval: "weekly"
       day: "monday"
     reviewers:
-      - "mrz1836"
+      - "rohenaz"
     assignees:
-      - "mrz1836"
+      - "rohenaz"
     labels:
       - "chore"
     open-pull-requests-limit: 10
